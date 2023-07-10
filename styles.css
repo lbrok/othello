@@ -28,3 +28,14 @@
 .white {
     fill: rgb(252, 252, 241);
 }
+
+.viable {
+    height: 38px;
+    width: 38px;
+    background-color: rgb(152, 206, 152);
+    outline-color: rgb(0, 0, 0);
+    outline-width: 0px;
+    outline-style: solid;
+    margin: 1px;
+    border-radius: 5px;
+}
