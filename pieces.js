@@ -1,0 +1,1 @@
+const disk = '<div class="piece"><svg fill="#000000" width="800px" height="800px" viewBox="0 0 32 32""><circle cx="16" cy="16" r="16"/></svg></div>'
