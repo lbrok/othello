@@ -4,7 +4,7 @@
     display: flex;
     flex-wrap: wrap;
     position: fixed;
-    top: 50%;
+    top: 40%;
     left: 50%;
     transform: translate(-50%, -50%);
 }
@@ -36,7 +36,7 @@
 .viable {
     height: 38px;
     width: 38px;
-    background-color: rgb(1, 121, 1);
+    background-color: rgb(132, 177, 132);
     outline-color: rgb(0, 0, 0);
     outline-width: 0px;
     outline-style: solid;

@@ -58,7 +58,8 @@ function placeDisk(id) {
         flipDisks(id)
         changePlayer()
         validMoves = findValidMoves()
-        if (validMoves==[]) {
+        if (validMoves.length == 0) {
+            console.log('No valid moves')
             changePlayer()
             validMoves = findValidMoves()
         }
