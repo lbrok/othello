@@ -1,6 +1,8 @@
 const gameBoard = document.querySelector("#gameboard")
 const playerDisplay = document.querySelector("#player")
 const infoDisplay = document.querySelector("#info-display")
+const scoreBlack = document.querySelector("#score-black")
+const scoreWhite = document.querySelector("#score-white")
 let playerTurn = 'white'
 playerDisplay.textContent = playerTurn
 
@@ -33,9 +35,7 @@ function createBoard() {
 }
 createBoard()
 const allSquares = document.querySelectorAll("#gameboard .square")
-console.log(allSquares)
-
-findValidMoves()
+let validMoves = findValidMoves()
 
 
 allSquares.forEach(square => {
@@ -46,16 +46,23 @@ allSquares.forEach(square => {
 
 function getClickedSquare(e) {
     let clickedSquare = Number(e.target.getAttribute('square-id'))
-    console.log(clickedSquare)
     placeDisk(clickedSquare)
 }
 
 function placeDisk(id) {
-    let targetSquare = document.querySelector('div[square-id="' + id + '"]')
-    targetSquare.removeEventListener('click', getClickedSquare, false)
-    targetSquare.innerHTML = disk
-    targetSquare.firstChild.firstChild.classList.add(playerTurn)
-    changePlayer()
+    if (validMoves.includes(id)) {
+        let targetSquare = document.querySelector('div[square-id="' + id + '"]')
+        targetSquare.removeEventListener('click', getClickedSquare, false)
+        targetSquare.innerHTML = disk
+        targetSquare.firstChild.firstChild.classList.add(playerTurn)
+        flipDisks(id)
+        changePlayer()
+        validMoves = findValidMoves()
+        if (validMoves==[]) {
+            changePlayer()
+            validMoves = findValidMoves()
+        }
+    }
 }
 
 function changePlayer() {
@@ -65,11 +72,40 @@ function changePlayer() {
         playerTurn = 'white'
     }
     playerDisplay.textContent = playerTurn
-    findValidMoves()
 }
 
 function findValidMoves() {
     const validMoves = []
+    let numOfBlack = 0
+    let numOfWhite = 0
+
+    allSquares.forEach(square => { 
+        square.classList.remove('viable')
+        if (!square.hasChildNodes()) {
+            let id = Number(square.getAttribute('square-id'))
+
+            neighDirections = findNeighbours(id)
+            neighDirections.forEach(step => {
+                if (squareRecursion(id, step, 0, false, []) && !validMoves.includes(id)) {
+                    validMoves.push(id)
+                    let validSquare = document.querySelector('div[square-id="' + id + '"]')
+                    validSquare.classList.add('viable')
+                }
+            })
+        } else {
+            if (square.firstChild.firstChild.classList[0] == 'black') {
+                numOfBlack = numOfBlack + 1
+            } else {
+                numOfWhite = numOfWhite + 1
+            }
+        }
+    })
+    scoreBlack.textContent = numOfBlack
+    scoreWhite.textContent = numOfWhite
+    return validMoves
+}
+
+function findNeighbours(id) {
     const Up = -8
     const UR = -7
     const Right = 1
@@ -79,72 +115,82 @@ function findValidMoves() {
     const Left = -1
     const UL = -9
 
-    allSquares.forEach(square => { 
-        square.classList.remove('viable')
-        if (!square.hasChildNodes()) {
-            let id = Number(square.getAttribute('square-id'))
+    let squareUp = document.querySelector('div[square-id="' + (id+Up) + '"]')
+    let squareUR = document.querySelector('div[square-id="' + (id+UR) + '"]')
+    let squareRight = document.querySelector('div[square-id="' + (id+Right) + '"]')
+    let squareDR = document.querySelector('div[square-id="' + (id+DR) + '"]')
+    let squareDown = document.querySelector('div[square-id="' + (id+Down) + '"]')
+    let squareDL = document.querySelector('div[square-id="' + (id+DL) + '"]')
+    let squareLeft = document.querySelector('div[square-id="' + (id+Left) + '"]')
+    let squareUL = document.querySelector('div[square-id="' + (id+UL) + '"]')
 
-            let squareUp = document.querySelector('div[square-id="' + (id+Up) + '"]')
-            let squareUR = document.querySelector('div[square-id="' + (id+UR) + '"]')
-            let squareRight = document.querySelector('div[square-id="' + (id+Right) + '"]')
-            let squareDR = document.querySelector('div[square-id="' + (id+DR) + '"]')
-            let squareDown = document.querySelector('div[square-id="' + (id+Down) + '"]')
-            let squareDL = document.querySelector('div[square-id="' + (id+DL) + '"]')
-            let squareLeft = document.querySelector('div[square-id="' + (id+Left) + '"]')
-            let squareUL = document.querySelector('div[square-id="' + (id+UL) + '"]')
-
-            let neighDirections = []
-            if (squareUp != null && squareUp.hasChildNodes()) {
-                neighDirections.push(Up)
-            } 
-            if (squareUR != null && squareUR.hasChildNodes()) {
-                neighDirections.push(UR)
-            }
-            if (squareRight != null && squareRight.hasChildNodes()) {
-                neighDirections.push(Right)
-            }
-            if (squareDR != null && squareDR.hasChildNodes()) {
-                neighDirections.push(DR)
-            }
-            if (squareDown != null && squareDown.hasChildNodes()) {
-                neighDirections.push(Down)
-            }
-            if (squareDL != null && squareDL.hasChildNodes()) {
-                neighDirections.push(DL)
-            }
-            if (squareLeft != null && squareLeft.hasChildNodes()) {
-                neighDirections.push(Left)
-            }
-            if (squareUL != null && squareUL.hasChildNodes()) {
-                neighDirections.push(UL)
-            }
-            neighDirections.forEach(step => {
-                if (squareRecursion(id, step, 0) && !validMoves.includes(id)) {
-                    validMoves.push(id)
-                    let validSquare = document.querySelector('div[square-id="' + id + '"]')
-                    validSquare.classList.add('viable')
-                }
-            })
-        }
-    })
+    let neighDirections = []
+    if (squareUp != null && squareUp.hasChildNodes()) {
+        neighDirections.push(Up)
+    } 
+    if (squareUR != null && squareUR.hasChildNodes()) {
+        neighDirections.push(UR)
+    }
+    if (squareRight != null && squareRight.hasChildNodes()) {
+        neighDirections.push(Right)
+    }
+    if (squareDR != null && squareDR.hasChildNodes()) {
+        neighDirections.push(DR)
+    }
+    if (squareDown != null && squareDown.hasChildNodes()) {
+        neighDirections.push(Down)
+    }
+    if (squareDL != null && squareDL.hasChildNodes()) {
+        neighDirections.push(DL)
+    }
+    if (squareLeft != null && squareLeft.hasChildNodes()) {
+        neighDirections.push(Left)
+    }
+    if (squareUL != null && squareUL.hasChildNodes()) {
+        neighDirections.push(UL)
+    }
+    return neighDirections    
 }
 
-function squareRecursion(start, step, iteration) {
+function squareRecursion(start, step, iteration, flip, squares) {
     id = start + step
     iteration = iteration + 1
     let targetSquare = document.querySelector('div[square-id="' + id + '"]')
     if (targetSquare != null && targetSquare.hasChildNodes()) {
+        if ((start % 8) == 7 && (step == -7 || step == 1 || step == 9)) {
+            return false
+        }
+        if ((start % 8) == 0 && (step == 7 || step == -1 || step == -9)) {
+            return false
+        }
         let color = targetSquare.querySelector('.piece').querySelector('svg').getAttribute('class')
         if (color == playerTurn) {
             if (iteration == 1) {
                 return false
             } else {
-                return true
+                if (flip) {
+                    squares.forEach(squareID =>{
+                        square = document.querySelector('div[square-id="' + squareID + '"]')
+                        oppositeColor = square.firstChild.firstChild.classList[0]
+                        square.firstChild.firstChild.classList.remove(oppositeColor)
+                        square.firstChild.firstChild.classList.add(playerTurn)
+                    })
+                } else if (!flip) {
+                    return true
+                }
             }
         } else {
-            return squareRecursion(id, step, iteration)
+            squares.push(id)
+            return squareRecursion(id, step, iteration, flip, squares)
         }
     } else {
         return false
     }
+}
+
+function flipDisks(id) {
+    let neighbours = findNeighbours(id)
+    neighbours.forEach(step => {
+        squareRecursion(id, step, 0, true, [])
+    })
 }

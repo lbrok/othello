@@ -3,6 +3,10 @@
     height: 320px;
     display: flex;
     flex-wrap: wrap;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
 .square {
@@ -32,10 +36,47 @@
 .viable {
     height: 38px;
     width: 38px;
-    background-color: rgb(152, 206, 152);
+    background-color: rgb(1, 121, 1);
     outline-color: rgb(0, 0, 0);
     outline-width: 0px;
     outline-style: solid;
     margin: 1px;
     border-radius: 5px;
+}
+
+#player {
+    color: rgb(7, 7, 7);
+    font-size: 2.5em;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+p {
+    text-align: center;
+}
+
+#score-white,
+#score-black {
+    font-size: 1.5em;
+    display: inline-block;
+    text-align: center;
+}
+
+#scoreboard {
+    margin-left: 3%;
+    margin-right: 3%;
+    padding-left: 2em;
+    padding-right: 2em;
+    border-radius: 5px;
+    box-shadow: 2px 2px 3px;
+}
+#scoreboard-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#disks {
+    align-items: center;
+    fill: green;
 }

@@ -7,8 +7,23 @@
 </head>
 <body>
     <div id="gameboard"></div>
-    <p>It is <span id="player"></span>'s turn</p>
-    <p id="info-display"></p>
+    <p><span id="player"></span></p>
+    <p id="info-display">
+        <div id="scoreboard-container">
+            <div id="scoreboard">
+                <svg width="19" height="19">
+                    <circle cx="9" cy="9" r="8" stroke="black" stroke-width="2" fill="white" />
+                </svg>
+                <span id="score-white"></span>
+            </div>
+            <div id="scoreboard">
+                <span id="score-black"></span>
+                <svg width="19" height="19">
+                    <circle cx="9" cy="9" r="8" stroke="black" stroke-width="2" fill="black" />
+                </svg>
+            </div>
+        </div>
+    </p>
     <script src="pieces.js"></script>
     <script src="app.js"></script> 
 </body>
