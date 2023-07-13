@@ -45,10 +45,15 @@
 }
 
 #player {
+    padding: 0.5%;
+    padding-left: 5%;
+    padding-right: 5%;
+    border-radius: 5px;
     color: rgb(7, 7, 7);
-    font-size: 2.5em;
+    font-size: 2em;
     font-weight: bold;
     text-transform: uppercase;
+    font-family: Verdana, Helvetica, sans-serif;
 }
 
 p {
@@ -60,6 +65,8 @@ p {
     font-size: 1.5em;
     display: inline-block;
     text-align: center;
+    position:relative;
+    top: -2px;
 }
 
 #scoreboard {

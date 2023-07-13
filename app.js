@@ -4,7 +4,11 @@ const infoDisplay = document.querySelector("#info-display")
 const scoreBlack = document.querySelector("#score-black")
 const scoreWhite = document.querySelector("#score-white")
 let playerTurn = 'white'
+let userColor = 'black'
 playerDisplay.textContent = playerTurn
+let boardArray = []
+let turn = 0
+let noValidMovesCount = 0
 
 const startPieces = [
     '','','','','','','','',
@@ -37,12 +41,24 @@ createBoard()
 const allSquares = document.querySelectorAll("#gameboard .square")
 let validMoves = findValidMoves()
 
+if (getRandomInt(2) == 0) {
+    userColor = 'white'
+    exePlayerTurn()
+} else {
+    exeAITurn()
+}
 
-allSquares.forEach(square => {
-    if (!square.hasChildNodes()) {
-        square.addEventListener('click', getClickedSquare)
-    }
-})
+function exePlayerTurn () {
+    allSquares.forEach(square => {
+        if (!square.hasChildNodes()) {
+            square.addEventListener('click', getClickedSquare)
+        }
+    })
+}
+function exeAITurn () {
+    move = makeMove(getBoardArray(), playerTurn, validMoves, turn)
+    placeDisk(move)
+}
 
 function getClickedSquare(e) {
     let clickedSquare = Number(e.target.getAttribute('square-id'))
@@ -50,6 +66,7 @@ function getClickedSquare(e) {
 }
 
 function placeDisk(id) {
+    turn = turn + 1
     if (validMoves.includes(id)) {
         let targetSquare = document.querySelector('div[square-id="' + id + '"]')
         targetSquare.removeEventListener('click', getClickedSquare, false)
@@ -59,24 +76,35 @@ function placeDisk(id) {
         changePlayer()
         validMoves = findValidMoves()
         if (validMoves.length == 0) {
-            console.log('No valid moves')
             changePlayer()
             validMoves = findValidMoves()
+            noValidMovesCount = noValidMovesCount + 1
+        } else {
+            noValidMovesCount = 0
         }
     }
+    if (playerTurn==userColor) {
+        exePlayerTurn()
+    } else {
+        exeAITurn()
+    }
+    console.log(noValidMovesCount)
 }
 
 function changePlayer() {
+    let element = document.querySelector('#player')
+    element.style.color = playerTurn
     if (playerTurn === 'white') {
         playerTurn = 'black'
     } else {
         playerTurn = 'white'
     }
     playerDisplay.textContent = playerTurn
+    element.style.backgroundColor = playerTurn
 }
 
 function findValidMoves() {
-    const validMoves = []
+    let validMoves = []
     let numOfBlack = 0
     let numOfWhite = 0
 
@@ -111,7 +139,7 @@ function findNeighbours(id) {
     const UR = -7
     const Right = 1
     const DR = 9
-    const Down = 8
+    const Down = 8  
     const DL = 7
     const Left = -1
     const UL = -9
@@ -195,3 +223,21 @@ function flipDisks(id) {
         squareRecursion(id, step, 0, true, [])
     })
 }
+
+function getBoardArray() {
+    let boardArray = []
+    squares = document.querySelectorAll("#gameboard .square")
+    squares.forEach(square => {
+        if (square.hasChildNodes()) {
+            boardArray.push(square.firstChild.firstChild.classList[0])
+        }
+        else {
+            boardArray.push('')
+        }
+    })
+    return boardArray
+}
+
+function getRandomInt(max) {
+    return Math.floor(Math.random() * max);
+  }
