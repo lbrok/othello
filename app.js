@@ -7,7 +7,7 @@ let playerTurn = 'white'
 let userColor = 'black'
 playerDisplay.textContent = playerTurn
 let boardArray = []
-let turn = 0
+let turn = 1
 let noValidMovesCount = 0
 
 const startPieces = [
@@ -88,7 +88,6 @@ function placeDisk(id) {
     } else {
         exeAITurn()
     }
-    console.log(noValidMovesCount)
 }
 
 function changePlayer() {
