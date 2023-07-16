@@ -56,7 +56,7 @@ function exePlayerTurn () {
     })
 }
 function exeAITurn () {
-    move = makeMove(getBoardArray(), playerTurn, validMoves, turn)
+    let move = makeMove(getBoardArray(), playerTurn, validMoves, turn)
     placeDisk(move)
 }
 
