@@ -3,16 +3,18 @@ let searchedMoves = 0
 function makeMove (array, player, validMoves, turn) {
     let scores = []
     console.log(turn)
+    validMoves = sortMoves(validMoves)
     if (validMoves.length != 0) {
         validMoves.forEach(move => {
                 let simulatedarray = simulateMove(array, player, move)
-                let simulatedscore = minimax(simulatedarray, false, calcOpposingPlayer(player), 0, turn+1, -1000, 1000)
+                let simulatedscore = minimax(simulatedarray, false, calcOpposingPlayer(player), 0, turn+1, -100000, 100000)
                 scores.push(simulatedscore)
             })
         let moveIndex = scores.reduce((iMax, x, i, arr) => x > arr[iMax] ? i : iMax, 0) //Gets the index of the highest score in the scores array
-        console.log(scores)
-        console.log([moveIndex,scores[moveIndex]])
+        //console.log(scores)
+        //console.log([moveIndex,scores[moveIndex]])
         console.log(searchedMoves)
+        searchedMoves = 0
         return validMoves[moveIndex]
     }
 }
@@ -142,7 +144,8 @@ function minimax(array, isMax, player, depth, turn, alpha, beta) {
     searchedMoves = searchedMoves + 1
     let currentTurn = turn
     let moves = possibleMoves(array,player)
-    if (depth == 5 || moves.length==0) {
+    moves = sortMoves(moves)
+    if (depth == 7 || moves.length==0) {
         return evaluateMove(array,player,scoringArrays(currentTurn))
     }
     if (isMax) {
@@ -151,9 +154,13 @@ function minimax(array, isMax, player, depth, turn, alpha, beta) {
             let maxMove = moves[i]
             let tempArray = simulateMove(array, player, maxMove)
             evaluation = minimax(tempArray, false, calcOpposingPlayer(player), (depth+1), (currentTurn+1), alpha, beta)
-            maxScore = Math.max(maxScore, evaluation)
-            alpha = Math.max(alpha, evaluation)
-            if (maxScore >= beta) {
+            if (evaluation > maxScore) {
+                maxScore = evaluation
+            }
+            if (evaluation > alpha) {
+                alpha = evaluation
+            }
+            if (beta <= alpha) {
                 break
             }
         }
@@ -164,14 +171,43 @@ function minimax(array, isMax, player, depth, turn, alpha, beta) {
             let minMove = moves[i]
             let tempArray = simulateMove(array, player, minMove)
             evaluation = minimax(tempArray, true, calcOpposingPlayer(player), (depth+1), (currentTurn+1), alpha, beta)
-            minScore = Math.min(evaluation, minScore)
-            beta = Math.min(evaluation, beta)
-            if (minScore <= alpha) {
+            if (evaluation < maxScore) {
+                maxScore = evaluation
+            }
+            if (evaluation < beta) {
+                beta = evaluation
+            }
+            if (beta <= alpha) {
                 break
             }
-        } 
+        }
         return minScore
     }
+}
+
+function sortMoves(validmoves) {
+    let sortedMoves = []
+    let cornerMoves = []
+    let sideMoves = []
+    let nondesiredMoves = []
+    const corners = [0,7,56,63]
+    const sides = [2,3,4,5,16,23,24,31,32,39,40,47,58,59,60,61]
+    const nondesired = [1,6,8,9,10,11,12,13,14,17,22,25,30,33,38,41,46,48,49,50,51,52,53,54,55,57,62]
+    validmoves.forEach(sortMove => {
+        if (corners.includes(sortMove)) {
+            cornerMoves.push(sortMove)
+        } else if (sides.includes(sortMove)) {
+            sideMoves.push(sortMove)
+        } else if (nondesired.includes(sortMove)) {
+            nondesiredMoves.push(sortMove)
+        } else {
+            sortedMoves.push(sortMove)
+        }
+    })
+    sortedMoves = sortedMoves.concat(nondesiredMoves)
+    sortedMoves = sideMoves.concat(sortedMoves)
+    sortedMoves = cornerMoves.concat(sortedMoves)
+    return sortedMoves
 }
 
 window.makeMove = makeMove;
