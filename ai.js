@@ -1,14 +1,18 @@
+let searchedMoves = 0
+
 function makeMove (array, player, validMoves, turn) {
     let scores = []
     console.log(turn)
     if (validMoves.length != 0) {
         validMoves.forEach(move => {
                 let simulatedarray = simulateMove(array, player, move)
-                let simulatedscore = minimax(simulatedarray, false, calcOpposingPlayer(player), 0, turn+1)
+                let simulatedscore = minimax(simulatedarray, false, calcOpposingPlayer(player), 0, turn+1, -1000, 1000)
                 scores.push(simulatedscore)
             })
         let moveIndex = scores.reduce((iMax, x, i, arr) => x > arr[iMax] ? i : iMax, 0) //Gets the index of the highest score in the scores array
         console.log(scores)
+        console.log([moveIndex,scores[moveIndex]])
+        console.log(searchedMoves)
         return validMoves[moveIndex]
     }
 }
@@ -60,14 +64,14 @@ function evaluateMove (simulatedarray, player, scoreingarray) {
 function scoringArrays(turn) {
     let scoreArray = []
     if (turn < 13) {
-        scoreArray = [5,5,5,5,5,5,5,5,
-            5,-50,-50,-50,-50,-50,-50,5,
-            5,-50,1,1,1,1,-50,5,
-            5,-50,1,1,1,1,-50,5,
-            5,-50,1,1,1,1,-50,5,
-            5,-50,1,1,1,1,-50,5,
-            5,-50,-50,-50,-50,-50,-50,5,
-            5,5,5,5,5,5,5,5,
+        scoreArray = [1000,50,50,50,50,50,50,1000,
+            100,-50,-30,-30,-30,-30,-50,50,
+            50,-30,1,1,1,1,-30,50,
+            50,-30,1,1,1,1,-30,50,
+            50,-30,1,1,1,1,-30,50,
+            50,-30,1,1,1,1,-30,50,
+            50,-50,-30,-30,-30,-30,-50,50,
+            1000,50,50,50,50,50,50,1000,
         ]
     } else if (turn > 56) {
         scoreArray = [1,1,1,1,1,1,1,1,
@@ -80,14 +84,14 @@ function scoringArrays(turn) {
             1,1,1,1,1,1,1,1,
         ]
     } else {
-        scoreArray = [100,-10,5,5,5,5,-10,100,
+        scoreArray = [1000,-10,5,5,5,5,-10,1000,
             -10,-5,-5,-5,-5,-5,-5,-10,
             5,-5,1,1,1,1,-5,5,
             5,-5,1,1,1,1,-5,5,
             5,-5,1,1,1,1,-5,5,
             5,-5,1,1,1,1,-5,5,
             -10,-5,-5,-5,-5,-5,-5,-10,
-            100,-10,5,5,5,5,-10,100,
+            1000,-10,5,5,5,5,-10,1000,
         ]
     }
     return scoreArray
@@ -134,32 +138,38 @@ function calcOpposingPlayer(player) {
 }
 
 
-function minimax(array, isMax, player, depth, turn) {
+function minimax(array, isMax, player, depth, turn, alpha, beta) {
+    searchedMoves = searchedMoves + 1
     let currentTurn = turn
     let moves = possibleMoves(array,player)
-    if (depth == 3 || moves.length==0) {
+    if (depth == 5 || moves.length==0) {
         return evaluateMove(array,player,scoringArrays(currentTurn))
     }
     if (isMax) {
-        maxScore = -1000
-        moves.forEach(maxMove => {
+        maxScore = -100000
+        for (let i = 0; i < moves.length; i++) {
+            let maxMove = moves[i]
             let tempArray = simulateMove(array, player, maxMove)
-            evaluation = minimax(tempArray, false, calcOpposingPlayer(player), (depth+1), (currentTurn+1))
-            if (evaluation > maxScore) {
-                maxScore = evaluation
-                bestMoveFound = maxMove
+            evaluation = minimax(tempArray, false, calcOpposingPlayer(player), (depth+1), (currentTurn+1), alpha, beta)
+            maxScore = Math.max(maxScore, evaluation)
+            alpha = Math.max(alpha, evaluation)
+            if (maxScore >= beta) {
+                break
             }
-        })
+        }
         return maxScore
     } else {
-        minScore = 1000
-        moves.forEach(minMove => {
+        minScore = 100000
+        for (let i = 0; i < moves.length; i++) {
+            let minMove = moves[i]
             let tempArray = simulateMove(array, player, minMove)
-            evaluation = minimax(tempArray, true, calcOpposingPlayer(player), (depth+1), (currentTurn+1))
-            if (evaluation < minScore) {
-                minScore = evaluation
+            evaluation = minimax(tempArray, true, calcOpposingPlayer(player), (depth+1), (currentTurn+1), alpha, beta)
+            minScore = Math.min(evaluation, minScore)
+            beta = Math.min(evaluation, beta)
+            if (minScore <= alpha) {
+                break
             }
-        }) 
+        } 
         return minScore
     }
 }
