@@ -203,6 +203,7 @@ function squareRecursion(start, step, iteration, flip, squares) {
                         square.firstChild.firstChild.classList.remove(oppositeColor)
                         square.firstChild.firstChild.classList.add(playerTurn)
                     })
+                    return true
                 } else if (!flip) {
                     return true
                 }

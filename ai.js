@@ -55,25 +55,29 @@ function boardRecursion (array, player, opposingPlayer, id, step, disks) {
 
 function evaluateMove (simulatedarray, player, scoreingarray) {
     let score = 0
+    let opponentscore = 0
     for (let i = 0; i < 64; i++) {
         if (simulatedarray[i] == player) {
             score = score + scoreingarray[i]
+        } else {
+            opponentscore = opponentscore + scoreingarray[i]
         }
     }
+    score = score - opponentscore
     return score
 }
 
 function scoringArrays(turn) {
     let scoreArray = []
     if (turn < 13) {
-        scoreArray = [1000,50,50,50,50,50,50,1000,
-            100,-50,-30,-30,-30,-30,-50,50,
+        scoreArray = [1000,30,50,50,50,50,30,1000,
+            30,-50,-30,-10,-10,-30,-50,30,
             50,-30,1,1,1,1,-30,50,
+            50,-10,1,1,1,1,-10,50,
+            50,-10,1,1,1,1,-10,50,
             50,-30,1,1,1,1,-30,50,
-            50,-30,1,1,1,1,-30,50,
-            50,-30,1,1,1,1,-30,50,
-            50,-50,-30,-30,-30,-30,-50,50,
-            1000,50,50,50,50,50,50,1000,
+            30,-50,-30,-10,-10,-30,-50,30,
+            1000,30,50,50,50,50,30,1000,
         ]
     } else if (turn > 56) {
         scoreArray = [1,1,1,1,1,1,1,1,
@@ -86,14 +90,14 @@ function scoringArrays(turn) {
             1,1,1,1,1,1,1,1,
         ]
     } else {
-        scoreArray = [1000,-10,5,5,5,5,-10,1000,
-            -10,-5,-5,-5,-5,-5,-5,-10,
-            5,-5,1,1,1,1,-5,5,
-            5,-5,1,1,1,1,-5,5,
-            5,-5,1,1,1,1,-5,5,
-            5,-5,1,1,1,1,-5,5,
-            -10,-5,-5,-5,-5,-5,-5,-10,
-            1000,-10,5,5,5,5,-10,1000,
+        scoreArray = [500,-20,20,5,5,20,-20,500,
+            -20,-40,-5,-5,-5,-5,-40,-20,
+            20,-5,15,3,3,15,-5,20,
+            5,-5,3,3,3,3,-5,5,
+            5,-5,3,3,3,3,-5,5,
+            20,-5,15,3,3,15,-5,20,
+            -20,-40,-5,-5,-5,-5,-40,-20,
+            500,-20,20,5,5,20,-20,500,
         ]
     }
     return scoreArray
