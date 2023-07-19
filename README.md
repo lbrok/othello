@@ -9,4 +9,4 @@ To download the required files run:
 git clone https://github.com/lbrok/othello
 ```
 Run index.html in your internet browser. You are then assigned a color and the game starts.
-![][https://github.com/lbrok/othello/Othello-gif-gif)
+![](https://github.com/lbrok/othello/Othello-gif.gif)
